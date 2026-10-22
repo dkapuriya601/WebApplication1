@@ -13,6 +13,10 @@ namespace WebApplication1.Services
         private static List<InventoryItem> _rawMaterials;
         private static List<FinishedStockItem> _finishedStock;
         private static List<Machine> _machines;
+        private static List<Supplier> _suppliers;
+        private static List<OrderMachineAssignment> _orderMachines;
+        private static List<OrderMaterialUsage> _orderMaterials;
+        private static List<OrderStatusHistoryItem> _orderStatusHistory;
 
         static BoxFactoryRepository()
         {
@@ -347,30 +351,63 @@ namespace WebApplication1.Services
                 }
             };
 
+            _suppliers = new List<Supplier>
+            {
+                new Supplier { Id = 1, Code = "SUP-001", Name = "NorthPaper Ltd", ContactPerson = "A. Verma", Email = "sales@northpaper.com", Phone = "+91 11 2345 6789", Address = "Phase II Industrial Area", City = "New Delhi" },
+                new Supplier { Id = 2, Code = "SUP-002", Name = "FlyteCo", ContactPerson = "R. Mehta", Email = "contact@flyteco.in", Phone = "+91 22 8765 4321", Address = "Turbhe MIDC", City = "Navi Mumbai" },
+                new Supplier { Id = 3, Code = "SUP-003", Name = "BoralChem", ContactPerson = "K. Singhania", Email = "orders@boralchem.com", Phone = "+91 79 3456 7890", Address = "Vatva GIDC", City = "Ahmedabad" },
+                new Supplier { Id = 4, Code = "SUP-004", Name = "CareInk Co", ContactPerson = "S. Nair", Email = "support@careink.co.in", Phone = "+91 44 4567 8901", Address = "Guindy Industrial Estate", City = "Chennai" },
+                new Supplier { Id = 5, Code = "SUP-005", Name = "CustTech", ContactPerson = "P. Deshmukh", Email = "info@custtech.in", Phone = "+91 20 6789 0123", Address = "Chakan MIDC", City = "Pune" }
+            };
+
             _rawMaterials = new List<InventoryItem>
             {
-                new InventoryItem { Sku = "MAT-011", Name = "Kraft Paper Roll (200gsm)", Category = "Paper Roll", StockQty = 4200, ReorderAt = 1000, Unit = "kg", Level = "Good", Supplier = "NorthPaper Ltd" },
-                new InventoryItem { Sku = "MAT-012", Name = "Kraft Paper Roll (300gsm)", Category = "Paper Roll", StockQty = 980, ReorderAt = 1000, Unit = "kg", Level = "Low", Supplier = "NorthPaper Ltd" },
-                new InventoryItem { Sku = "MAT-013", Name = "Corrugating Medium", Category = "Fluting Medium", StockQty = 3100, ReorderAt = 800, Unit = "kg", Level = "Good", Supplier = "FlyteCo" },
-                new InventoryItem { Sku = "MAT-014", Name = "Starch Adhesive", Category = "Adhesive", StockQty = 620, ReorderAt = 300, Unit = "liters", Level = "OK", Supplier = "BoralChem" },
-                new InventoryItem { Sku = "MAT-015", Name = "Water-based Ink (Black)", Category = "Printing Ink", StockQty = 88, ReorderAt = 100, Unit = "liters", Level = "Low", Supplier = "CareInk Co" },
-                new InventoryItem { Sku = "MAT-016", Name = "Wax Coating Compound", Category = "Coating", StockQty = 190, ReorderAt = 200, Unit = "kg", Level = "OK", Supplier = "CustTech" }
+                new InventoryItem { Sku = "MAT-011", Name = "Kraft Paper Roll (200gsm)", Category = "Paper Roll", StockQty = 4200, ReorderAt = 1000, Unit = "kg", Level = "Good", SupplierId = 1, Supplier = "NorthPaper Ltd" },
+                new InventoryItem { Sku = "MAT-012", Name = "Kraft Paper Roll (300gsm)", Category = "Paper Roll", StockQty = 980, ReorderAt = 1000, Unit = "kg", Level = "Low", SupplierId = 1, Supplier = "NorthPaper Ltd" },
+                new InventoryItem { Sku = "MAT-013", Name = "Corrugating Medium", Category = "Fluting Medium", StockQty = 3100, ReorderAt = 800, Unit = "kg", Level = "Good", SupplierId = 2, Supplier = "FlyteCo" },
+                new InventoryItem { Sku = "MAT-014", Name = "Starch Adhesive", Category = "Adhesive", StockQty = 620, ReorderAt = 300, Unit = "liters", Level = "OK", SupplierId = 3, Supplier = "BoralChem" },
+                new InventoryItem { Sku = "MAT-015", Name = "Water-based Ink (Black)", Category = "Printing Ink", StockQty = 88, ReorderAt = 100, Unit = "liters", Level = "Low", SupplierId = 4, Supplier = "CareInk Co" },
+                new InventoryItem { Sku = "MAT-016", Name = "Wax Coating Compound", Category = "Coating", StockQty = 190, ReorderAt = 200, Unit = "kg", Level = "OK", SupplierId = 5, Supplier = "CustTech" }
             };
 
             _finishedStock = new List<FinishedStockItem>
             {
-                new FinishedStockItem { ItemCode = "FIN-501", Description = "5 Ply Standard Corrugated Box", BoxSpecs = "40×30×25 cm", AvailableQty = 1450, ReservedQty = 500, ReservedFor = "Apex Logistics", Pallets = "6 Pallets", Status = "Ready for Dispatch" },
-                new FinishedStockItem { ItemCode = "FIN-302", Description = "3 Ply Lightweight Shipping Box", BoxSpecs = "30×20×15 cm", AvailableQty = 2800, ReservedQty = 1200, ReservedFor = "Green Pack Co.", Pallets = "8 Pallets", Status = "Dispatched" },
-                new FinishedStockItem { ItemCode = "FIN-703", Description = "7 Ply Heavy Duty Export Box", BoxSpecs = "50×40×30 cm", AvailableQty = 620, ReservedQty = 0, ReservedFor = "-", Pallets = "3 Pallets", Status = "Available" },
-                new FinishedStockItem { ItemCode = "FIN-504", Description = "5 Ply Reinforced Archive Box", BoxSpecs = "45×35×30 cm", AvailableQty = 900, ReservedQty = 750, ReservedFor = "StarBrand Inc.", Pallets = "4 Pallets", Status = "In Production" }
+                new FinishedStockItem { ItemCode = "FIN-501", Description = "5 Ply Standard Corrugated Box", BoxSpecs = "40×30×25 cm", AvailableQty = 1450, ReservedQty = 500, CustomerId = "CUST-001", OrderId = "ORD-1041", ReservedFor = "Apex Logistics", Pallets = "6 Pallets", Status = "Ready for Dispatch" },
+                new FinishedStockItem { ItemCode = "FIN-302", Description = "3 Ply Lightweight Shipping Box", BoxSpecs = "30×20×15 cm", AvailableQty = 2800, ReservedQty = 1200, CustomerId = "CUST-002", OrderId = "ORD-1040", ReservedFor = "Green Pack Co.", Pallets = "8 Pallets", Status = "Dispatched" },
+                new FinishedStockItem { ItemCode = "FIN-703", Description = "7 Ply Heavy Duty Export Box", BoxSpecs = "50×40×30 cm", AvailableQty = 620, ReservedQty = 0, CustomerId = null, OrderId = null, ReservedFor = "-", Pallets = "3 Pallets", Status = "Available" },
+                new FinishedStockItem { ItemCode = "FIN-504", Description = "5 Ply Reinforced Archive Box", BoxSpecs = "45×35×30 cm", AvailableQty = 900, ReservedQty = 750, CustomerId = "CUST-004", OrderId = "ORD-1038", ReservedFor = "StarBrand Inc.", Pallets = "4 Pallets", Status = "In Production" }
             };
 
             _machines = new List<Machine>
             {
-                new Machine { Name = "Cutter A", Status = "Running", SpeedMetric = "87% speed | 420 cuts/hr", ProgressPercent = 85, BadgeClass = "badge-running" },
-                new Machine { Name = "Printer Line 1", Status = "Running", SpeedMetric = "65% speed | 2-Color Flexo", ProgressPercent = 65, BadgeClass = "badge-running" },
-                new Machine { Name = "Gluer B", Status = "Idle", SpeedMetric = "Warmup ready | Queue: 1,200", ProgressPercent = 20, BadgeClass = "badge-idle" },
-                new Machine { Name = "Die-Cut Press", Status = "Maintenance", SpeedMetric = "Blade replacement | Resume: 45m", ProgressPercent = 0, BadgeClass = "badge-maintenance" }
+                new Machine { Id = 1, Name = "Cutter A", Status = "Running", SpeedMetric = "87% speed | 420 cuts/hr", ProgressPercent = 85, BadgeClass = "badge-running" },
+                new Machine { Id = 2, Name = "Printer Line 1", Status = "Running", SpeedMetric = "65% speed | 2-Color Flexo", ProgressPercent = 65, BadgeClass = "badge-running" },
+                new Machine { Id = 3, Name = "Gluer B", Status = "Idle", SpeedMetric = "Warmup ready | Queue: 1,200", ProgressPercent = 20, BadgeClass = "badge-idle" },
+                new Machine { Id = 4, Name = "Die-Cut Press", Status = "Maintenance", SpeedMetric = "Blade replacement | Resume: 45m", ProgressPercent = 0, BadgeClass = "badge-maintenance" }
+            };
+
+            _orderMachines = new List<OrderMachineAssignment>
+            {
+                new OrderMachineAssignment { Id = 1, OrderId = "ORD-1041", MachineId = 1, MachineName = "Cutter A", Status = "Running" },
+                new OrderMachineAssignment { Id = 2, OrderId = "ORD-1041", MachineId = 2, MachineName = "Printer Line 1", Status = "Running" },
+                new OrderMachineAssignment { Id = 3, OrderId = "ORD-1040", MachineId = 3, MachineName = "Gluer B", Status = "Completed" }
+            };
+
+            _orderStatusHistory = new List<OrderStatusHistoryItem>
+            {
+                new OrderStatusHistoryItem { Id = 1, OrderId = "ORD-1041", StepNumber = 1, StepName = "Order Confirmed", IsCompleted = true, CompletedAt = DateTime.Now.AddDays(-3), Notes = "Specifications verified against CUST-001 master contract." },
+                new OrderStatusHistoryItem { Id = 2, OrderId = "ORD-1041", StepNumber = 2, StepName = "In Production", IsCompleted = true, CompletedAt = DateTime.Now.AddDays(-1), Notes = "Corrugation completed, printing line active." },
+                new OrderStatusHistoryItem { Id = 3, OrderId = "ORD-1041", StepNumber = 3, StepName = "Quality Check", IsCompleted = false, CompletedAt = null, Notes = "Pending post-gluing dimensional inspection." },
+                new OrderStatusHistoryItem { Id = 4, OrderId = "ORD-1041", StepNumber = 4, StepName = "Dispatched", IsCompleted = false, CompletedAt = null, Notes = "Awaiting loading onto truck." },
+                new OrderStatusHistoryItem { Id = 5, OrderId = "ORD-1041", StepNumber = 5, StepName = "Delivered", IsCompleted = false, CompletedAt = null, Notes = "Expected delivery at Mumbai MIDC facility." }
+            };
+
+            _orderMaterials = new List<OrderMaterialUsage>
+            {
+                new OrderMaterialUsage { Id = 1, OrderId = "ORD-1041", Sku = "MAT-011", QuantityUsed = 250m, Unit = "kg" },
+                new OrderMaterialUsage { Id = 2, OrderId = "ORD-1041", Sku = "MAT-013", QuantityUsed = 180m, Unit = "kg" },
+                new OrderMaterialUsage { Id = 3, OrderId = "ORD-1041", Sku = "MAT-014", QuantityUsed = 35m, Unit = "liters" },
+                new OrderMaterialUsage { Id = 4, OrderId = "ORD-1041", Sku = "MAT-015", QuantityUsed = 5.5m, Unit = "liters" }
             };
         }
 
@@ -397,6 +434,41 @@ namespace WebApplication1.Services
         public static List<Machine> GetMachines()
         {
             lock (_lock) { return _machines.ToList(); }
+        }
+
+        public static List<Supplier> GetSuppliers()
+        {
+            lock (_lock) { return _suppliers.ToList(); }
+        }
+
+        public static List<OrderMachineAssignment> GetOrderMachines(string orderId = null)
+        {
+            lock (_lock)
+            {
+                return string.IsNullOrEmpty(orderId)
+                    ? _orderMachines.ToList()
+                    : _orderMachines.Where(m => m.OrderId == orderId).ToList();
+            }
+        }
+
+        public static List<OrderMaterialUsage> GetOrderMaterials(string orderId = null)
+        {
+            lock (_lock)
+            {
+                return string.IsNullOrEmpty(orderId)
+                    ? _orderMaterials.ToList()
+                    : _orderMaterials.Where(m => m.OrderId == orderId).ToList();
+            }
+        }
+
+        public static List<OrderStatusHistoryItem> GetOrderStatusHistory(string orderId = null)
+        {
+            lock (_lock)
+            {
+                return string.IsNullOrEmpty(orderId)
+                    ? _orderStatusHistory.ToList()
+                    : _orderStatusHistory.Where(h => h.OrderId == orderId).ToList();
+            }
         }
 
         public static Order AddOrder(Order order)

@@ -19,7 +19,7 @@ namespace WebApplication1.Models
 
     public class Customer
     {
-        public string Id { get; set; }
+        public string Id { get; set; } // Primary Key (e.g. CUST-001)
         public string Name { get; set; }
         public string City { get; set; }
         public string ContactPerson { get; set; }
@@ -38,8 +38,8 @@ namespace WebApplication1.Models
 
     public class Order
     {
-        public string Id { get; set; }
-        public string CustomerId { get; set; }
+        public string Id { get; set; } // Primary Key (e.g. ORD-1041)
+        public string CustomerId { get; set; } // Foreign Key -> Customer.Id
         public string CompanyName { get; set; }
         public BoxSpecification Specs { get; set; }
         public int Quantity { get; set; }
@@ -59,25 +59,40 @@ namespace WebApplication1.Models
         public string MachinesAssigned { get; set; }
     }
 
+    public class Supplier
+    {
+        public int Id { get; set; } // Primary Key
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public string ContactPerson { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+    }
+
     public class InventoryItem
     {
-        public string Sku { get; set; }
+        public string Sku { get; set; } // Primary Key (e.g. MAT-011)
         public string Name { get; set; }
         public string Category { get; set; }
         public decimal StockQty { get; set; }
         public decimal ReorderAt { get; set; }
         public string Unit { get; set; } // "kg", "liters"
         public string Level { get; set; } // "Good", "OK", "Low"
+        public int? SupplierId { get; set; } // Foreign Key -> Supplier.Id
         public string Supplier { get; set; }
     }
 
     public class FinishedStockItem
     {
-        public string ItemCode { get; set; }
+        public string ItemCode { get; set; } // Primary Key (e.g. FIN-501)
         public string Description { get; set; }
         public string BoxSpecs { get; set; }
         public int AvailableQty { get; set; }
         public int ReservedQty { get; set; }
+        public string CustomerId { get; set; } // Foreign Key -> Customer.Id
+        public string OrderId { get; set; }    // Foreign Key -> Order.Id
         public string ReservedFor { get; set; }
         public string Pallets { get; set; }
         public string Status { get; set; }
@@ -85,10 +100,50 @@ namespace WebApplication1.Models
 
     public class Machine
     {
+        public int Id { get; set; } // Primary Key
         public string Name { get; set; }
         public string Status { get; set; } // "Running", "Idle", "Maintenance"
         public string SpeedMetric { get; set; }
         public int ProgressPercent { get; set; }
         public string BadgeClass { get; set; }
+    }
+
+    public class UserAccount
+    {
+        public int Id { get; set; } // Primary Key
+        public string Email { get; set; }
+        public string FullName { get; set; }
+        public string Role { get; set; } // "Admin", "Customer"
+        public string CustomerId { get; set; } // Foreign Key -> Customer.Id
+        public bool IsActive { get; set; }
+    }
+
+    public class OrderStatusHistoryItem
+    {
+        public int Id { get; set; } // Primary Key
+        public string OrderId { get; set; } // Foreign Key -> Order.Id
+        public int StepNumber { get; set; }
+        public string StepName { get; set; }
+        public bool IsCompleted { get; set; }
+        public DateTime? CompletedAt { get; set; }
+        public string Notes { get; set; }
+    }
+
+    public class OrderMachineAssignment
+    {
+        public int Id { get; set; } // Primary Key
+        public string OrderId { get; set; } // Foreign Key -> Order.Id
+        public int MachineId { get; set; }  // Foreign Key -> Machine.Id
+        public string MachineName { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class OrderMaterialUsage
+    {
+        public int Id { get; set; } // Primary Key
+        public string OrderId { get; set; } // Foreign Key -> Order.Id
+        public string Sku { get; set; }     // Foreign Key -> InventoryItem.Sku
+        public decimal QuantityUsed { get; set; }
+        public string Unit { get; set; }
     }
 }
