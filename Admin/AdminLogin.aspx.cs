@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 
@@ -15,11 +16,50 @@ namespace WebApplication1.AdminPages
 
         protected void btnAdminLogin_Click(object sender, EventArgs e)
         {
-            string email = adminLoginEmail.Text.Trim();
-            string pwd   = adminLoginPassword.Text.Trim();
+            lblError.Visible = false;
+            lblError.Text = string.Empty;
 
+            // 1. Check client & server-side Validator controls
+            if (!Page.IsValid)
+            {
+                return;
+            }
+
+            string email = (adminLoginEmail.Text ?? string.Empty).Trim();
+            string pwd   = (adminLoginPassword.Text ?? string.Empty).Trim();
+
+            // 2. Explicit server-side validation checks
+            if (string.IsNullOrEmpty(email))
+            {
+                lblError.Text = "Email address is required.";
+                lblError.Visible = true;
+                return;
+            }
+
+            if (!Regex.IsMatch(email, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
+            {
+                lblError.Text = "Please enter a valid email address.";
+                lblError.Visible = true;
+                return;
+            }
+
+            if (string.IsNullOrEmpty(pwd))
+            {
+                lblError.Text = "Password is required.";
+                lblError.Visible = true;
+                return;
+            }
+
+            if (pwd.Length < 6)
+            {
+                lblError.Text = "Password must be at least 6 characters long.";
+                lblError.Visible = true;
+                return;
+            }
+
+            // 3. Credential authentication
             if ((email.Equals("admin@boxfactory.in", StringComparison.OrdinalIgnoreCase) && pwd == "admin123") ||
-                email.IndexOf("admin", StringComparison.OrdinalIgnoreCase) >= 0)
+                (email.IndexOf("admin", StringComparison.OrdinalIgnoreCase) >= 0 && pwd == "admin123"))
             {
                 Session["Role"] = "Admin";
                 Response.Redirect("~/Admin/Dashboard.aspx");
